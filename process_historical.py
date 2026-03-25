@@ -22,5 +22,34 @@ kenpom_bart_df = kenpom_bart_df[kenpom_bart_df["ROUND"] > 0]
 # must reset index, use drop arg to get rid of old index col
 kenpom_bart_df = kenpom_bart_df.reset_index(drop=True)
 
+# print(kenpom_bart_df.head())
 
-print(kenpom_bart_df.head())
+# only need year, team name, and score from matchups
+# YEAR and TEAM to match outcome with corresponding team's stats, score to determine winner
+matchups_df = pd.read_csv(f"{path}/Tournament Matchups.csv")[["YEAR", "TEAM", "SCORE"]]
+matchups_df = matchups_df[matchups_df["YEAR"] < 2026].reset_index(drop=True)
+print(matchups_df.head())
+
+i = 0
+while (i < len(matchups_df)): # len(df) returns num ROWS
+    winner = None
+
+    row1 = matchups_df.iloc[i]
+    team1 = row1["TEAM"] # access values in row series using col name
+    score1 = row1["SCORE"]
+
+    row2 = matchups_df.iloc[i + 1]
+    team2 = row2["TEAM"]
+    score2 = row2["SCORE"]
+
+    year = row1["YEAR"]
+
+    if score1 > score2:
+        winner = team1
+    else:
+        winner = team2
+    
+    
+    
+
+    i += 2
