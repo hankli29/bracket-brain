@@ -4,7 +4,7 @@ import pandas as pd
 # downloads latest version of march madness data
 path = kagglehub.dataset_download("nishaanamin/march-madness-data")
 
-print("Path to dataset files:", path)
+# print("Path to dataset files:", path)
 
 kenpom_bart_df = pd.read_csv(f"{path}/KenPom Barttorvik.csv")
 # print(kenpom_bart_df.head()) # prints the first 5 rows of data from the  
@@ -12,12 +12,12 @@ kenpom_bart_df = pd.read_csv(f"{path}/KenPom Barttorvik.csv")
 # indexing into a data frame returns a sub-table/sub-data frame
 # single key/column for a series, list of keys for a data frame
 # only want to focus on these select data columns
-kenpom_bart_df = kenpom_bart_df[["YEAR", "TEAM", "SEED", "ROUND", "KADJ O", "KADJ D", "KADJ EM", "BADJ O", "BADJ D", "BADJ EM", "BARTHAG", "WIN%", "EXP", "TALENT", "ELITE SOS"]]
-# data for current year (2026) has every team ROUND stat = 0, this will skew data
+kenpom_bart_df = kenpom_bart_df[["YEAR", "TEAM", "SEED", "KADJ O", "KADJ D", "KADJ EM", "BADJ O", "BADJ D", "BADJ EM", "BARTHAG", "WIN%", "EXP", "TALENT", "ELITE SOS"]]
+stats_2026_df = kenpom_bart_df[kenpom_bart_df["YEAR"] == 2026].drop("YEAR", axis = 1)
 
-# kenpom_bart_df["ROUND"] > 0 creates a boolean mask (true for rows where condition is true, false otherwise)
+# kenpom_bart_df["YEAR"] < 2026 creates a boolean mask (true for rows where condition is true, false otherwise)
 # kenpom_bart_df[<boolean mask>] returns data frame only containing "true" rows
-kenpom_bart_df = kenpom_bart_df[kenpom_bart_df["ROUND"] > 0]
+kenpom_bart_df = kenpom_bart_df[kenpom_bart_df["YEAR"] < 2026]
 # after removing 2026 data, row index will no longer start from 0
 # must reset index, use drop arg to get rid of old index col, inplace to modify df in place
 kenpom_bart_df.reset_index(drop=True, inplace=True)
@@ -57,8 +57,8 @@ while (i < len(matchups_df)): # len(df) returns num ROWS
         winner = 1
     
     # indexing with double braces returns a data frame, NOT a series
-    t1_data = kenpom_bart_df.loc[[(year, team1)]].drop("ROUND", axis = 1)
-    t2_data = kenpom_bart_df.loc[[(year, team2)]].drop("ROUND", axis = 1)
+    t1_data = kenpom_bart_df.loc[[(year, team1)]]
+    t2_data = kenpom_bart_df.loc[[(year, team2)]]
 
     # rename the columns of each individual data frame to avoid name collisions -> prevent ambiguity
     # multi-indices were originally different -> reset index to have resulting data frame be single row and avoid NaNs
@@ -76,3 +76,4 @@ match_stats_df = pd.concat(data_rows).reset_index(drop=True)
 # save historical data to a separate csv file so data can be imported and used in other files
 # by fault pandas saves row indices as an extra column -> unnecessary and model will treat as a feature (unwanted)
 match_stats_df.to_csv("/Users/hankli/bracket-brain/historical_data.csv", index=False)
+stats_2026_df.to_csv("/Users/hankli/bracket-brain/2026_team_stats.csv", index=False)
