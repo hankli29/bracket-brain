@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import xgboost as xgb
 import pandas as pd
+import pickle
 
 historical_data = pd.read_csv("/Users/hankli/bracket-brain/historical_data.csv")
 
@@ -17,9 +18,14 @@ x_train, x_test, y_train, y_test = train_test_split(historical_stats, historical
 model = xgb.XGBClassifier()
 # train the model using training data -> xgboost handles training
 model.fit(x_train, y_train)
+
+# use pickle to serialize the model and store it in a file
+# model can then be imported and used in other files without recreating/retraining
+with open("/Users/hankli/bracket-brain/trained_model.pkl", "wb") as file:
+    pickle.dump(model, file)
+
 # have the model make predictions on the test data
-predictions = model.predict(x_test)
+# predictions = model.predict(x_test)
 
 # accuracy_score calculates the accuracy of the model's predictions
-accuracy = accuracy_score(y_test, predictions)
-print(f"Model accuracy: {accuracy:.2f}")
+# accuracy = accuracy_score(y_test, predictions)
