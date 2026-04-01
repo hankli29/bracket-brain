@@ -17,4 +17,4 @@ def predict_winner(team1, team2):
     else:
         return team2
 
-# print(predict_winner("Akron", "Alabama"))
+# print(predict_winner("Saint Mary's", "Texas A&M"))
