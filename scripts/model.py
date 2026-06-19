@@ -8,6 +8,7 @@ import mlflow.xgboost
 from pathlib import Path
 
 # path of project root
+# __file__ contains the absolute path of the current file specific to the machine running the file
 base_dir = Path(__file__).resolve().parent.parent
 
 historical_data = pd.read_csv(base_dir / "data" / "historical_data.csv")
