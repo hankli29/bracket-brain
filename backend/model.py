@@ -18,13 +18,14 @@ historical_outcomes = historical_data["WINNER"]
 
 # we need to separate data into separate training and testing sets to avoid overfitting
 # train using training set, check accuracy with testing set
-x_train, x_test, y_train, y_test = train_test_split(historical_stats, historical_outcomes, test_size = 0.2)
+x_train, x_test, y_train, y_test = train_test_split(historical_stats, historical_outcomes, test_size = 0.2, random_state=42)
 
 # set training parameters for xgboost
 params = {
     "n_estimators": 100,
     "max_depth": 4,
     "learning_rate": 0.05,
+    "features": ", ".join(historical_stats.columns)
 }
 
 mlflow.set_experiment("bracketbrain")
@@ -52,5 +53,5 @@ with mlflow.start_run():
 
 # use pickle to serialize the model and store it in a file
 # model can then be imported and used in other files without recreating/retraining
-with open("../trained_model.pkl", "wb") as file:
+with open(base_dir / "models" / "trained_model.pkl", "wb") as file:
     pickle.dump(model, file)
