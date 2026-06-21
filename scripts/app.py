@@ -40,6 +40,7 @@ gemini_key = os.getenv("GEMINI_API_KEY")
 client = get_gemini_client(gemini_key)
 
 st.title("BracketBrain")
+st.set_page_config(page_title="BracketBrain", page_icon=f"{base_dir}/pictures/favicon.png")
 
 # if st.context.theme.type == "light":
    # st.logo(base_dir / "pictures" / "light_logo.png", size="large")
@@ -92,7 +93,8 @@ if st.button("Predict Winner"):
             Constraints:
             -Audience: knowledgeable basketball fan.
             -Tone: analytical, plain language, no hype.
-            -Concise, plain prose, no bullet points, no headers, no emojis
+            -Plain prose, no bullet points, no headers, no emojis
+            -Elaborate significance of key indicating/decision-maker metrics
             -Do not endorse, second-guess, or alter the prediction
             -Do not reference any actual game results, past or future. Treat this as a hypothetical matchup.
             -Format percentage stats as percents, integers without decimals, round other stats to 2 decimal places.
