@@ -49,10 +49,16 @@ while (i < len(matchups_df)):
 
     # rename the columns of each individual data frame to avoid name collisions -> prevent ambiguity
     # multi-indices were originally different -> reset index to have resulting data frame be single row and avoid NaNs
-    data_row = pd.concat([t1_data.add_suffix(" T1").reset_index(drop=True), t2_data.add_suffix(" T2").reset_index(drop=True)], axis = 1)
-    data_row["WINNER"] = winner
+    data_row_v1 = pd.concat([t1_data.add_suffix(" T1").reset_index(drop=True), t2_data.add_suffix(" T2").reset_index(drop=True)], axis = 1)
+    data_row_v1["WINNER"] = winner
 
-    data_rows.append(data_row)
+    # higher seed team is always T1 in raw data -> duplicate rows but swap T1 and T2 labels
+    # to prevent model from naively creating correlation between teams being labeled as T1 and winning
+    data_row_v2 = pd.concat([t1_data.add_suffix(" T2").reset_index(drop=True), t2_data.add_suffix(" T1").reset_index(drop=True)], axis = 1)
+    data_row_v2["WINNER"] = 0 if winner == 1 else 1
+
+    data_rows.append(data_row_v1)
+    data_rows.append(data_row_v2)
     
     i += 2
 
