@@ -7,7 +7,9 @@ path = kagglehub.dataset_download("nishaanamin/march-madness-data")
 
 kenpom_bart_df = pd.read_csv(f"{path}/KenPom Barttorvik.csv")
 
-kenpom_bart_df = kenpom_bart_df[["YEAR", "TEAM", "SEED", "KADJ O", "KADJ D", "KADJ EM", "BADJ O", "BADJ D", "BADJ EM", "BARTHAG", "WIN%", "EXP", "TALENT", "ELITE SOS"]]
+kenpom_bart_df = kenpom_bart_df[["YEAR", "TEAM", "SEED", "KADJ O", "KADJ D", "KADJ EM", "BARTHAG",
+                                 "WIN%", "EXP", "TALENT", "ELITE SOS", "KADJ T", "BADJ T", 
+                                 "TOV%", "TOV%D", "OREB%", "DREB%", "3PTR", "3PT%"]]
 stats_2026_df = kenpom_bart_df[kenpom_bart_df["YEAR"] == 2026].drop("YEAR", axis = 1)
 
 kenpom_bart_df = kenpom_bart_df[kenpom_bart_df["YEAR"] < 2026]
