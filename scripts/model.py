@@ -9,12 +9,15 @@ from pathlib import Path
 
 base_dir = Path(__file__).resolve().parent.parent
 
-historical_data = pd.read_csv(base_dir / "data" / "historical_data.csv")
+# historical_data = pd.read_csv(base_dir / "data" / "historical_data.csv")
+historical_data = pd.read_csv(base_dir / "data" / "final_training_data.csv")
 
-historical_stats = historical_data.drop("WINNER", axis=1)
+# "YEAR", "TEAM", "SEED", "KADJ O", "KADJ D", "KADJ EM", "BARTHAG", "WIN%", "EXP", "TALENT", "ELITE SOS", "KADJ T", "BADJ T", 
+# "TOV%", "TOV%D", "OREB%", "DREB%", "3PTR", "3PT%"
+
+historical_stats = historical_data.drop(["TEAM T1", "TEAM T2", "WINNER", "YEAR", "DATE"], axis=1)
+# historical_stats = historical_data.drop(["TEAM T1", "TEAM T2", "WINNER"], axis=1)
 historical_outcomes = historical_data["WINNER"]
-
-x_train, x_test, y_train, y_test = train_test_split(historical_stats, historical_outcomes, test_size = 0.2, random_state=42)
 
 params = {
     "n_estimators": 100,
@@ -22,10 +25,11 @@ params = {
     "learning_rate": 0.05,
 }
 
-mlflow.set_experiment("bracketbrain")
+mlflow.set_experiment("madnessmapper")
 
+x_train, x_test, y_train, y_test = train_test_split(historical_stats, historical_outcomes, test_size = 0.2, random_state=123)
 with mlflow.start_run():
-    model = xgb.XGBClassifier(**params, random_state=42)
+    model = xgb.XGBClassifier(**params, random_state=123)
 
     model.fit(x_train, y_train)
 
