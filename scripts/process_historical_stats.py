@@ -25,7 +25,6 @@ matchups_df = matchups_df[matchups_df["YEAR"] < 2026].reset_index(drop=True)
 
 
 i = 0
-match_stats_df = pd.DataFrame()
 data_rows = []
 
 while (i < len(matchups_df)):
@@ -46,8 +45,9 @@ while (i < len(matchups_df)):
     else:
         winner = 1
     
-    t1_data = kenpom_bart_df.loc[[(year, team1)]]
-    t2_data = kenpom_bart_df.loc[[(year, team2)]]
+    # reset index to keep year of game for later joining with odds df
+    t1_data = kenpom_bart_df.loc[[(year, team1)]].reset_index()
+    t2_data = kenpom_bart_df.loc[[(year, team2)]].reset_index()
 
     # rename the columns of each individual data frame to avoid name collisions -> prevent ambiguity
     # multi-indices were originally different -> reset index to have resulting data frame be single row and avoid NaNs
