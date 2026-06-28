@@ -1,53 +1,43 @@
-# this module should receive data as a paramter
-# it should NOT do the calling itself (isolate functionality)
+from fetch_data import get_data
 
-
-def process_odds(odds_data):
-    processed_data = []
-
-    # we want to loop through all the data and extract 3 things
-    # team names, average odds, and game commencement time
-
+def find_game(odds_data, team1, team2):
     for game in odds_data:
-        game_info = {}
-        game_info["home_team"] = game["home_team"]
-        game_info["away_team"] = game["away_team"]
-        game_info["start_time"] = game["commence_time"]
+        home, away = game["home_team"], game["away_team"]
 
-        home_odds = 0
-        away_odds = 0
+        if {team1, team2} == {home, away}:
+            return game
+    
+    return None
 
-        books = game["bookmakers"]
-        for book in books:
-            name1 = book["markets"][0]["outcomes"][0]["name"]
-            odds1 = book["markets"][0]["outcomes"][0]["price"]
-            odds2 = book["markets"][0]["outcomes"][1]["price"]
 
-            # odds are ordered alphabetically, not according to home/away
-            # must check which team each odds is for
-            if name1 == game["home_team"]:
-                home_odds += odds1
-                away_odds += odds2
-            else:
-                home_odds += odds2
-                away_odds += odds1
-        
-        # ensure that books is not empty -> only calculate average if not empty
-        if len(books) > 0:
-            # average odds to find the CONSENSUS LINE (because every book has their own odds)
-            game_info["home_odds"] = int(home_odds / len(books))
-            game_info["away_odds"] = int(away_odds / len(books))
-        else:
-            game_info["home_odds"] = None
-            game_info["away_odds"] = None
+def process_odds(game_data, team1, team2):
+    ml_t1, ml_t2 = [], []
+    spread_t1, spread_t2 = [], []
+    total_ou = []
 
-        # add dictionary to list of all game info
-        processed_data.append(game_info)
+    for bookmaker in game_data["bookmakers"]:
+        for market in bookmaker["markets"]:
+            if market["key"] == "h2h": # h2h == moneyline
+                for outcome in market["outcomes"]:
+                    if outcome["name"] == team1:
+                        ml_t1.append(outcome["price"])
+                    elif outcome["name"] == team2: # explicitly check in case there is a third possible outcome that is neither team
+                        ml_t2.append(outcome["price"])
 
-    return processed_data
+            elif market["key"] == "spreads":
+                for outcome in market["outcomes"]:
+                    if outcome["name"] == team1:
+                        spread_t1.append(outcome["point"])
+                    elif outcome["name"] == team2:
+                        spread_t2.append(outcome["point"])
 
-if __name__ == "__main__":
-    from fetch_data import get_data
-
-    odds_data = get_data()
-    print(process_odds(odds_data))
+            else: # market == total o/u
+                total_ou.append(market["outcomes"][0]["point"])
+    
+    return {
+        "ML T1": sum(ml_t1) / len(ml_t1) if len(ml_t1) > 0 else float("nan"),
+        "ML T2": sum(ml_t2) / len(ml_t2) if len(ml_t2) > 0 else float("nan"),
+        "SPREAD T1": sum(spread_t1) / len(spread_t1) if len(spread_t1) > 0 else float("nan"),
+        "SPREAD T2": sum(spread_t2) / len(spread_t2) if len(spread_t2) > 0 else float("nan"),
+        "TOTAL OU": sum(total_ou) / len(total_ou) if len(total_ou) > 0 else float("nan")
+    }
