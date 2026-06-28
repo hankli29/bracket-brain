@@ -37,8 +37,8 @@ def process_odds(game_data, team1, team2):
     
     return {
         "ML T1": sum(ml_t1) / len(ml_t1) if len(ml_t1) > 0 else float("nan"),
-        "ML T2": sum(ml_t2) / len(ml_t2) if len(ml_t2) > 0 else float("nan"),
         "SPREAD T1": sum(spread_t1) / len(spread_t1) if len(spread_t1) > 0 else float("nan"),
+        "ML T2": sum(ml_t2) / len(ml_t2) if len(ml_t2) > 0 else float("nan"),
         "SPREAD T2": sum(spread_t2) / len(spread_t2) if len(spread_t2) > 0 else float("nan"),
         "TOTAL OU": sum(total_ou) / len(total_ou) if len(total_ou) > 0 else float("nan")
     }
